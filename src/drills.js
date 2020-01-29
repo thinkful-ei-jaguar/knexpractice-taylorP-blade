@@ -30,4 +30,33 @@ function viewPage(pageNumber) {
     });
 }
 
-viewPage(5);
+function viewItemsByDate(daysAgo) {
+  knexInstance
+    .from('shopping_list')
+    .select('*')
+    .where(
+      'date_added',
+      '>',
+      knexInstance.raw("now()-'?? days'::INTERVAL", daysAgo)
+    )
+    .then(res=>{
+      console.log(res)
+    })
+}
+
+function getCost() {
+  knexInstance
+    .select(
+      knexInstance.raw("SUM(price), category")
+    )
+    .from('shopping_list')
+    .groupBy('category')
+    .orderBy([
+      {column: 'sum', order: 'DESC'},
+    ])
+    .then(res=>{
+      console.log(res)
+    })
+}
+
+getCost()
